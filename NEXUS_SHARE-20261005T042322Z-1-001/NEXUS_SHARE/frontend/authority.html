@@ -1,0 +1,2439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>NEXUS — Authority Console</title>
+
+<style>
+:root{
+    --bg:#061417;
+    --panel:#0b2024;
+    --panel2:#102b30;
+    --line:#1b3b40;
+    --text:#e9f8f7;
+    --muted:#8ca9aa;
+    --cyan:#48d8d0;
+    --green:#62dda1;
+    --amber:#f2cc68;
+    --red:#ff7070;
+    --shadow:0 18px 50px rgba(0,0,0,.30);
+}
+
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    background:
+        radial-gradient(circle at 80% 0,#12363b,transparent 30%),
+        var(--bg);
+    color:var(--text);
+    font-family:Inter,Segoe UI,Arial,sans-serif;
+}
+
+button,
+input,
+select{
+    font:inherit;
+}
+
+button{
+    cursor:pointer;
+}
+
+.wrap{
+    width:min(1240px,92%);
+    margin:auto;
+}
+
+.nav{
+    position:sticky;
+    top:0;
+    z-index:1000;
+    background:rgba(6,20,23,.94);
+    backdrop-filter:blur(15px);
+    border-bottom:1px solid var(--line);
+}
+
+.navin{
+    min-height:72px;
+    display:flex;
+    align-items:center;
+    gap:14px;
+}
+
+.brand{
+    display:flex;
+    gap:10px;
+    align-items:center;
+    color:var(--text);
+    text-decoration:none;
+    margin-right:auto;
+}
+
+.logo{
+    width:39px;
+    height:39px;
+    border:1px solid var(--cyan);
+    border-radius:11px;
+    display:grid;
+    place-items:center;
+    color:var(--cyan);
+    font-weight:900;
+}
+
+.brand b{
+    display:block;
+    letter-spacing:.12em;
+}
+
+.brand small{
+    color:var(--muted);
+    font-size:8px;
+    letter-spacing:.15em;
+}
+
+.role{
+    border:1px solid #275158;
+    background:#0c292e;
+    color:var(--cyan);
+    padding:8px 11px;
+    border-radius:999px;
+    font-size:10px;
+    letter-spacing:.08em;
+    font-weight:800;
+}
+
+.btn{
+    border:1px solid var(--line);
+    background:rgba(255,255,255,.03);
+    color:var(--text);
+    border-radius:10px;
+    padding:10px 14px;
+}
+
+.btn:hover{
+    border-color:#3c676d;
+}
+
+.btn.primary{
+    background:var(--cyan);
+    color:#042023;
+    border-color:var(--cyan);
+    font-weight:800;
+}
+
+.btn.green{
+    color:#9debc2;
+    border-color:#275d49;
+    background:#0c2921;
+}
+
+.btn.red{
+    color:#ffaaaa;
+    border-color:#6d3438;
+    background:#291316;
+}
+
+.btn.amber{
+    color:#ffe49a;
+    border-color:#68572a;
+    background:#29230e;
+}
+
+.hero{
+    padding:48px 0 25px;
+}
+
+.eyebrow{
+    color:var(--cyan);
+    font-size:10px;
+    letter-spacing:.17em;
+    text-transform:uppercase;
+}
+
+.hero h1{
+    margin:10px 0 5px;
+    font-size:clamp(32px,5vw,55px);
+    letter-spacing:-.04em;
+}
+
+.hero p{
+    color:var(--muted);
+    margin:0;
+    line-height:1.6;
+}
+
+.identity{
+    margin-top:20px;
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+.identity-card{
+    border:1px solid var(--line);
+    background:var(--panel);
+    border-radius:12px;
+    padding:11px 14px;
+}
+
+.identity-card span{
+    display:block;
+    color:var(--muted);
+    font-size:9px;
+    text-transform:uppercase;
+    letter-spacing:.08em;
+}
+
+.identity-card b{
+    display:block;
+    margin-top:4px;
+    font-size:13px;
+}
+
+.stats{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:11px;
+    margin:20px 0;
+}
+
+.stat{
+    border:1px solid var(--line);
+    background:var(--panel);
+    border-radius:14px;
+    padding:15px;
+}
+
+.stat span{
+    color:var(--muted);
+    font-size:9px;
+    letter-spacing:.08em;
+}
+
+.stat strong{
+    display:block;
+    margin-top:7px;
+    font-size:27px;
+}
+
+.toolbar{
+    border:1px solid var(--line);
+    background:var(--panel);
+    border-radius:15px;
+    padding:12px;
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    align-items:center;
+    margin-bottom:14px;
+}
+
+.search{
+    flex:1;
+    min-width:210px;
+}
+
+.search input,
+.filter select{
+    width:100%;
+    background:#07171a;
+    border:1px solid var(--line);
+    border-radius:9px;
+    color:var(--text);
+    padding:10px;
+    outline:none;
+}
+
+.filter{
+    width:170px;
+}
+
+.table-wrap{
+    border:1px solid var(--line);
+    background:var(--panel);
+    border-radius:17px;
+    overflow:auto;
+    box-shadow:var(--shadow);
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    min-width:1050px;
+}
+
+th{
+    text-align:left;
+    color:#91b1b2;
+    font-size:9px;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    background:#0a1b1f;
+    padding:13px;
+    border-bottom:1px solid var(--line);
+}
+
+td{
+    padding:13px;
+    border-bottom:1px solid #153237;
+    vertical-align:top;
+    font-size:12px;
+}
+
+tr:last-child td{
+    border-bottom:0;
+}
+
+.incident-title{
+    font-weight:800;
+}
+
+.incident-meta{
+    color:var(--muted);
+    font-size:10px;
+    margin-top:4px;
+    line-height:1.5;
+}
+
+.badge{
+    display:inline-block;
+    border-radius:999px;
+    padding:5px 8px;
+    font-size:9px;
+    font-weight:800;
+    letter-spacing:.05em;
+}
+
+.badge.low{
+    color:#9ce5bc;
+    background:#143227;
+}
+
+.badge.medium{
+    color:#efd47d;
+    background:#342e17;
+}
+
+.badge.high,
+.badge.critical{
+    color:#ffaaaa;
+    background:#3b1e24;
+}
+
+.badge.reported{
+    color:#d8e7e8;
+    background:#182d31;
+}
+
+.badge.verified,
+.badge.assigned{
+    color:#91e7e0;
+    background:#103437;
+}
+
+.badge.rejected{
+    color:#ffaaaa;
+    background:#351b20;
+}
+
+.actions{
+    display:flex;
+    gap:6px;
+    flex-wrap:wrap;
+}
+
+.actions .btn{
+    padding:7px 9px;
+    font-size:10px;
+}
+
+.empty{
+    padding:45px 20px;
+    text-align:center;
+    color:var(--muted);
+}
+
+.loading{
+    padding:45px 20px;
+    text-align:center;
+    color:var(--muted);
+}
+
+.section{
+    padding:15px 0 35px;
+}
+
+.section-title{
+    margin:0 0 12px;
+    font-size:20px;
+}
+
+.notification-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:11px;
+}
+
+.notification{
+    border:1px solid var(--line);
+    background:var(--panel);
+    border-radius:13px;
+    padding:14px;
+}
+
+.notification b{
+    font-size:12px;
+}
+
+.notification p{
+    color:var(--muted);
+    font-size:11px;
+    line-height:1.5;
+}
+
+.notification small{
+    color:#628183;
+}
+
+.history{
+    border:1px solid var(--line);
+    background:var(--panel);
+    border-radius:15px;
+    overflow:auto;
+}
+
+.history table{
+    min-width:850px;
+}
+
+.footer{
+    border-top:1px solid var(--line);
+    color:var(--muted);
+    text-align:center;
+    font-size:10px;
+    padding:30px 0;
+}
+
+.modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    z-index:2000;
+    background:rgba(0,0,0,.76);
+    align-items:center;
+    justify-content:center;
+    padding:18px;
+}
+
+.modal.show{
+    display:flex;
+}
+
+.modalbox{
+    width:min(620px,100%);
+    max-height:90vh;
+    overflow:auto;
+    background:#0a1e23;
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding:20px;
+    box-shadow:var(--shadow);
+}
+
+.modalhead{
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+}
+
+.modalhead h2{
+    margin:5px 0 0;
+}
+
+.notice{
+    color:var(--muted);
+    font-size:11px;
+    line-height:1.6;
+}
+
+.detail-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin-top:15px;
+}
+
+.detail{
+    border:1px solid var(--line);
+    background:#07171a;
+    border-radius:10px;
+    padding:11px;
+}
+
+.detail span{
+    display:block;
+    color:var(--muted);
+    font-size:9px;
+    text-transform:uppercase;
+}
+
+.detail b{
+    display:block;
+    margin-top:5px;
+    font-size:12px;
+}
+
+.detail.full{
+    grid-column:1/-1;
+}
+
+select{
+    background:#07171a;
+    color:var(--text);
+    border:1px solid var(--line);
+    border-radius:9px;
+    padding:11px;
+    width:100%;
+}
+
+.modal-actions{
+    display:flex;
+    justify-content:flex-end;
+    gap:8px;
+    margin-top:16px;
+}
+
+.error{
+    color:#ffaaaa;
+    font-size:11px;
+}
+
+.success{
+    color:#9debc2;
+    font-size:11px;
+}
+
+@media(max-width:900px){
+
+    .stats{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .notification-grid{
+        grid-template-columns:1fr;
+    }
+
+}
+
+@media(max-width:600px){
+
+    .stats{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .detail-grid{
+        grid-template-columns:1fr;
+    }
+
+    .detail.full{
+        grid-column:auto;
+    }
+
+    .role{
+        display:none;
+    }
+
+}
+</style>
+</head>
+
+<body>
+
+<nav class="nav">
+
+<div class="wrap navin">
+
+<a class="brand" href="index.html">
+
+<div class="logo">
+N
+</div>
+
+<div>
+<b>NEXUS</b>
+<small>CRISIS INTELLIGENCE</small>
+</div>
+
+</a>
+
+<div class="role">
+AUTHORITY CONSOLE
+</div>
+
+<button
+class="btn"
+onclick="goHome()"
+>
+Public View
+</button>
+
+<button
+class="btn red"
+onclick="logout()"
+>
+Logout
+</button>
+
+</div>
+
+</nav>
+
+
+<main>
+
+<section class="wrap hero">
+
+<div class="eyebrow">
+Authority Operations
+</div>
+
+<h1>
+Authority Console
+</h1>
+
+<p>
+Verification, assignment and government-level monitoring of incoming crisis reports.
+</p>
+
+<div class="identity">
+
+<div class="identity-card">
+
+<span>
+Officer
+</span>
+
+<b id="userName">
+Loading…
+</b>
+
+</div>
+
+<div class="identity-card">
+
+<span>
+Email
+</span>
+
+<b id="userEmail">
+Loading…
+</b>
+
+</div>
+
+<div class="identity-card">
+
+<span>
+Role
+</span>
+
+<b id="userRole">
+AUTHORITY
+</b>
+
+</div>
+
+</div>
+
+</section>
+
+
+<section class="wrap">
+
+<div class="stats">
+
+<div class="stat">
+
+<span>
+TOTAL REPORTS
+</span>
+
+<strong id="totalCount">
+—
+</strong>
+
+</div>
+
+<div class="stat">
+
+<span>
+REPORTED
+</span>
+
+<strong id="reportedCount">
+—
+</strong>
+
+</div>
+
+<div class="stat">
+
+<span>
+VERIFIED
+</span>
+
+<strong id="verifiedCount">
+—
+</strong>
+
+</div>
+
+<div class="stat">
+
+<span>
+ASSIGNED
+</span>
+
+<strong id="assignedCount">
+—
+</strong>
+
+</div>
+
+<div class="stat">
+
+<span>
+CRITICAL / HIGH
+</span>
+
+<strong id="priorityCount">
+—
+</strong>
+
+</div>
+
+</div>
+
+
+<div class="toolbar">
+
+<div class="search">
+
+<input
+id="searchInput"
+placeholder="Search incident, location or description..."
+oninput="renderIncidents()"
+>
+
+</div>
+
+<div class="filter">
+
+<select
+id="statusFilter"
+onchange="renderIncidents()"
+>
+
+<option value="ALL">
+All statuses
+</option>
+
+<option value="REPORTED">
+Reported
+</option>
+
+<option value="VERIFIED">
+Verified
+</option>
+
+<option value="REJECTED">
+Rejected
+</option>
+
+<option value="ASSIGNED">
+Assigned
+</option>
+
+</select>
+
+</div>
+
+<div class="filter">
+
+<select
+id="severityFilter"
+onchange="renderIncidents()"
+>
+
+<option value="ALL">
+All severity
+</option>
+
+<option value="CRITICAL">
+Critical
+</option>
+
+<option value="HIGH">
+High
+</option>
+
+<option value="MEDIUM">
+Medium
+</option>
+
+<option value="LOW">
+Low
+</option>
+
+</select>
+
+</div>
+
+<button
+class="btn"
+onclick="loadIncidents()"
+>
+Refresh
+</button>
+
+</div>
+
+
+<div class="table-wrap">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>
+Incident
+</th>
+
+<th>
+Location
+</th>
+
+<th>
+Severity
+</th>
+
+<th>
+Status
+</th>
+
+<th>
+Department
+</th>
+
+<th>
+Reported
+</th>
+
+<th>
+Authority Action
+</th>
+
+</tr>
+
+</thead>
+
+<tbody id="incidentTable">
+
+<tr>
+<td colspan="7">
+<div class="loading">
+Loading incidents…
+</div>
+</td>
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</section>
+
+
+<section class="section wrap">
+
+<h2 class="section-title">
+Authority Notifications
+</h2>
+
+<div
+id="notifications"
+class="notification-grid"
+>
+
+<div class="loading">
+Loading notifications…
+</div>
+
+</div>
+
+</section>
+
+
+<section class="section wrap">
+
+<h2 class="section-title">
+Incident History
+</h2>
+
+<div class="history">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>
+Time
+</th>
+
+<th>
+Incident
+</th>
+
+<th>
+Action
+</th>
+
+<th>
+From
+</th>
+
+<th>
+To
+</th>
+
+<th>
+Actor
+</th>
+
+</tr>
+
+</thead>
+
+<tbody id="historyTable">
+
+<tr>
+
+<td colspan="6">
+
+<div class="loading">
+Select an incident to view history.
+</div>
+
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</section>
+
+</main>
+
+
+<footer class="footer">
+
+<div class="wrap">
+
+NEXUS Authority Console · Tamil Nadu Crisis Intelligence
+
+<br><br>
+
+Authority responsibility:
+Reported → Verified / Rejected → Assigned
+
+</div>
+
+</footer>
+
+
+<!-- INCIDENT DETAIL MODAL -->
+
+<div
+id="detailModal"
+class="modal"
+>
+
+<div class="modalbox">
+
+<div class="modalhead">
+
+<div>
+
+<div class="eyebrow">
+Incident Record
+</div>
+
+<h2 id="detailTitle">
+Incident
+</h2>
+
+</div>
+
+<button
+class="btn"
+onclick="closeModal('detailModal')"
+>
+×
+</button>
+
+</div>
+
+<div
+id="detailContent"
+>
+</div>
+
+</div>
+
+</div>
+
+
+<!-- ASSIGN DEPARTMENT MODAL -->
+
+<div
+id="assignModal"
+class="modal"
+>
+
+<div class="modalbox">
+
+<div class="modalhead">
+
+<div>
+
+<div class="eyebrow">
+Authority Assignment
+</div>
+
+<h2>
+Assign Department
+</h2>
+
+</div>
+
+<button
+class="btn"
+onclick="closeModal('assignModal')"
+>
+×
+</button>
+
+</div>
+
+<p class="notice">
+
+Assignment transfers the incident into the responsible department's operational queue. The department then handles ACCEPTED → IN PROGRESS → COMPLETED → RESOLVED.
+
+</p>
+
+<div class="detail">
+
+<span>
+Incident
+</span>
+
+<b id="assignIncidentTitle">
+—
+</b>
+
+</div>
+
+<div style="margin-top:12px">
+
+<select id="departmentSelect">
+
+<option value="">
+Select department
+</option>
+
+<option value="1">
+Water & Drainage
+</option>
+
+<option value="2">
+Traffic & Transport
+</option>
+
+<option value="3">
+Fire & Rescue
+</option>
+
+<option value="4">
+Police
+</option>
+
+<option value="5">
+Electricity
+</option>
+
+<option value="6">
+Health & Medical
+</option>
+
+<option value="7">
+Chennai Corporation
+</option>
+
+</select>
+
+</div>
+
+<div
+id="assignError"
+class="error"
+style="margin-top:10px"
+></div>
+
+<div
+id="assignSuccess"
+class="success"
+style="margin-top:10px"
+></div>
+
+<div class="modal-actions">
+
+<button
+class="btn"
+onclick="closeModal('assignModal')"
+>
+Cancel
+</button>
+
+<button
+class="btn primary"
+onclick="confirmAssignment()"
+>
+Assign Department
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+
+<script>
+
+const API='https://nexus-production-26d9.up.railway.app';
+
+const TOKEN_KEY='nexusAuthorityToken';
+
+const USER_KEY='nexusAuthorityUser';
+
+let token=
+localStorage.getItem(TOKEN_KEY);
+
+let user=
+readJSON(USER_KEY);
+
+let incidents=[];
+
+let selectedIncident=null;
+
+
+function readJSON(key){
+
+    try{
+
+        return JSON.parse(
+            localStorage.getItem(key)||'null'
+        );
+
+    }
+    catch{
+
+        return null;
+
+    }
+
+}
+
+
+function escapeHTML(value){
+
+    return String(value??'').replace(
+        /[&<>"']/g,
+        function(char){
+
+            return {
+                '&':'&amp;',
+                '<':'&lt;',
+                '>':'&gt;',
+                '"':'&quot;',
+                "'":'&#39;'
+            }[char];
+
+        }
+    );
+
+}
+
+
+function authHeaders(){
+
+    return {
+        'Content-Type':'application/json',
+        'Authorization':'Bearer '+token
+    };
+
+}
+
+
+function normalizeStatus(value){
+
+    return String(
+        value??'REPORTED'
+    ).toUpperCase();
+
+}
+
+
+function normalizeSeverity(value){
+
+    return String(
+        value??'LOW'
+    ).toUpperCase();
+
+}
+
+
+function severityClass(value){
+
+    const s=
+        normalizeSeverity(value);
+
+    if(
+        s==='CRITICAL'
+    ){
+
+        return 'critical';
+
+    }
+
+    if(
+        s==='HIGH'
+    ){
+
+        return 'high';
+
+    }
+
+    if(
+        s==='MEDIUM'
+    ){
+
+        return 'medium';
+
+    }
+
+    return 'low';
+
+}
+
+
+function statusClass(value){
+
+    return normalizeStatus(value)
+        .toLowerCase()
+        .replaceAll('_','-');
+
+}
+
+
+function formatDate(value){
+
+    if(!value)
+        return '—';
+
+    const d=
+        new Date(value);
+
+    if(
+        Number.isNaN(
+            d.getTime()
+        )
+    ){
+
+        return String(value);
+
+    }
+
+    return d.toLocaleString();
+
+}
+
+
+function incidentTitle(item){
+
+    return item.title||
+        item.name||
+        'Untitled incident';
+
+}
+
+
+function incidentLocation(item){
+
+    return item.location||
+        item.address||
+        item.area||
+        'Unknown location';
+
+}
+
+
+function incidentDescription(item){
+
+    return item.description||
+        item.message||
+        'No description provided.';
+
+}
+
+
+async function apiGet(path){
+
+    const response=
+        await fetch(
+            API+path,
+            {
+                headers:authHeaders()
+            }
+        );
+
+    const data=
+        await response.json()
+            .catch(
+                ()=>({})
+            );
+
+    if(!response.ok){
+
+        throw new Error(
+            data.message||
+            data.error||
+            'Request failed'
+        );
+
+    }
+
+    return data;
+
+}
+
+
+async function apiPatch(path,body){
+
+    const response=
+        await fetch(
+            API+path,
+            {
+                method:'PATCH',
+                headers:authHeaders(),
+                body:JSON.stringify(body)
+            }
+        );
+
+    const data=
+        await response.json()
+            .catch(
+                ()=>({})
+            );
+
+    if(!response.ok){
+
+        throw new Error(
+            data.message||
+            data.error||
+            'Request failed'
+        );
+
+    }
+
+    return data;
+
+}
+
+
+async function verifyAuthority(){
+
+    if(!token){
+
+        window.location.href=
+            'index.html';
+
+        return false;
+
+    }
+
+    try{
+
+        const response=
+            await fetch(
+                API+'/api/auth/me',
+                {
+                    headers:{
+                        'Authorization':
+                            'Bearer '+token
+                    }
+                }
+            );
+
+        const data=
+            await response.json()
+                .catch(
+                    ()=>({})
+                );
+
+        if(
+            !response.ok||
+            data.success===false
+        ){
+
+            throw new Error();
+
+        }
+
+        user=
+            data.user||
+            data.account||
+            user;
+
+        if(
+            !user||
+            String(user.role)
+                .toUpperCase()!=='AUTHORITY'
+        ){
+
+            throw new Error();
+
+        }
+
+        localStorage.setItem(
+            USER_KEY,
+            JSON.stringify(user)
+        );
+
+        updateIdentity();
+
+        return true;
+
+    }
+    catch{
+
+        localStorage.removeItem(
+            TOKEN_KEY
+        );
+
+        localStorage.removeItem(
+            USER_KEY
+        );
+
+        window.location.href=
+            'index.html';
+
+        return false;
+
+    }
+
+}
+
+
+function updateIdentity(){
+
+    document.getElementById(
+        'userName'
+    ).textContent=
+        user?.name||
+        'Authority Officer';
+
+    document.getElementById(
+        'userEmail'
+    ).textContent=
+        user?.email||
+        '—';
+
+    document.getElementById(
+        'userRole'
+    ).textContent=
+        user?.role||
+        'AUTHORITY';
+
+}
+
+
+async function loadIncidents(){
+
+    const body=
+        document.getElementById(
+            'incidentTable'
+        );
+
+    body.innerHTML=
+        '<tr><td colspan="7">'+
+        '<div class="loading">Loading incidents…</div>'+
+        '</td></tr>';
+
+    try{
+
+        const data=
+            await apiGet(
+                '/api/incidents'
+            );
+
+        incidents=
+            Array.isArray(data)
+                ?data
+                :(data.incidents||
+                  data.rows||
+                  data.data||
+                  []);
+
+        renderIncidents();
+
+        updateStats();
+
+    }
+    catch(error){
+
+        incidents=[];
+
+        body.innerHTML=
+            '<tr><td colspan="7">'+
+            '<div class="empty">'+
+            'Unable to load incidents.<br><br>'+
+            escapeHTML(
+                error.message
+            )+
+            '</div>'+
+            '</td></tr>';
+
+        updateStats();
+
+    }
+
+}
+
+
+function filteredIncidents(){
+
+    const search=
+        document.getElementById(
+            'searchInput'
+        ).value
+        .trim()
+        .toLowerCase();
+
+    const status=
+        document.getElementById(
+            'statusFilter'
+        ).value;
+
+    const severity=
+        document.getElementById(
+            'severityFilter'
+        ).value;
+
+    return incidents
+        .filter(
+            item=>{
+
+                const haystack=
+                    (
+                        incidentTitle(item)+
+                        ' '+
+                        incidentLocation(item)+
+                        ' '+
+                        incidentDescription(item)
+                    )
+                    .toLowerCase();
+
+                const matchesSearch=
+                    !search||
+                    haystack.includes(search);
+
+                const matchesStatus=
+                    status==='ALL'||
+                    normalizeStatus(
+                        item.status
+                    )===status;
+
+                const matchesSeverity=
+                    severity==='ALL'||
+                    normalizeSeverity(
+                        item.severity
+                    )===severity;
+
+                return(
+                    matchesSearch&&
+                    matchesStatus&&
+                    matchesSeverity
+                );
+
+            }
+        )
+        .sort(
+            (a,b)=>{
+
+                const priority={
+                    CRITICAL:4,
+                    HIGH:3,
+                    MEDIUM:2,
+                    LOW:1
+                };
+
+                return(
+                    (priority[
+                        normalizeSeverity(b.severity)
+                    ]||0)-
+                    (priority[
+                        normalizeSeverity(a.severity)
+                    ]||0)
+                );
+
+            }
+        );
+
+}
+
+
+function renderIncidents(){
+
+    const body=
+        document.getElementById(
+            'incidentTable'
+        );
+
+    const rows=
+        filteredIncidents();
+
+    if(!rows.length){
+
+        body.innerHTML=
+            '<tr><td colspan="7">'+
+            '<div class="empty">'+
+            'No incidents match the current filters.'+
+            '</div>'+
+            '</td></tr>';
+
+        return;
+
+    }
+
+    body.innerHTML=
+        rows.map(
+            item=>{
+
+                const id=
+                    Number(item.id);
+
+                const status=
+                    normalizeStatus(
+                        item.status
+                    );
+
+                const severity=
+                    normalizeSeverity(
+                        item.severity
+                    );
+
+                return(
+
+                    '<tr>'+
+
+                    '<td>'+
+                    '<div class="incident-title">'+
+                    escapeHTML(
+                        incidentTitle(item)
+                    )+
+                    '</div>'+
+                    '<div class="incident-meta">'+
+                    'ID #'+
+                    escapeHTML(id)+
+                    '<br>'+
+                    escapeHTML(
+                        incidentDescription(item)
+                            .slice(0,120)
+                    )+
+                    '</div>'+
+                    '</td>'+
+
+                    '<td>'+
+                    escapeHTML(
+                        incidentLocation(item)
+                    )+
+                    '</td>'+
+
+                    '<td>'+
+                    '<span class="badge '+
+                    severityClass(severity)+
+                    '">'+
+                    escapeHTML(severity)+
+                    '</span>'+
+                    '</td>'+
+
+                    '<td>'+
+                    '<span class="badge '+
+                    statusClass(status)+
+                    '">'+
+                    escapeHTML(status)+
+                    '</span>'+
+                    '</td>'+
+
+                    '<td>'+
+                    escapeHTML(
+                        item.department_name||
+                        item.department||
+                        'Not assigned'
+                    )+
+                    '</td>'+
+
+                    '<td>'+
+                    escapeHTML(
+                        formatDate(
+                            item.created_at||
+                            item.createdAt
+                        )
+                    )+
+                    '</td>'+
+
+                    '<td>'+
+                    authorityActions(item)+
+                    '</td>'+
+
+                    '</tr>'
+
+                );
+
+            }
+        )
+        .join('');
+
+}
+
+
+function authorityActions(item){
+
+    const status=
+        normalizeStatus(
+            item.status
+        );
+
+    let html=
+        '<div class="actions">';
+
+    html+=
+        '<button class="btn" '+
+        'onclick="viewIncident('+Number(item.id)+')">'+
+        'View'+
+        '</button>';
+
+    html+=
+        '<button class="btn" '+
+        'onclick="viewHistory('+Number(item.id)+')">'+
+        'History'+
+        '</button>';
+
+    if(
+        status==='REPORTED'
+    ){
+
+        html+=
+            '<button class="btn green" '+
+            'onclick="verifyIncident('+Number(item.id)+')">'+
+            'Verify'+
+            '</button>';
+
+        html+=
+            '<button class="btn red" '+
+            'onclick="rejectIncident('+Number(item.id)+')">'+
+            'Reject'+
+            '</button>';
+
+    }
+
+    if(
+        status==='VERIFIED'
+    ){
+
+        html+=
+            '<button class="btn amber" '+
+            'onclick="openAssign('+Number(item.id)+')">'+
+            'Assign Department'+
+            '</button>';
+
+    }
+
+    html+=
+        '</div>';
+
+    return html;
+
+}
+
+
+async function verifyIncident(id){
+
+    if(
+        !confirm(
+            'Verify this incident?'
+        )
+    ){
+
+        return;
+
+    }
+
+    try{
+
+        await apiPatch(
+            '/api/incidents/'+
+            id+
+            '/status',
+            {
+                status:'VERIFIED'
+            }
+        );
+
+        await loadIncidents();
+
+        await viewHistory(id);
+
+    }
+    catch(error){
+
+        alert(
+            error.message||
+            'Unable to verify incident.'
+        );
+
+    }
+
+}
+
+
+async function rejectIncident(id){
+
+    if(
+        !confirm(
+            'Reject this incident?'
+        )
+    ){
+
+        return;
+
+    }
+
+    try{
+
+        await apiPatch(
+            '/api/incidents/'+
+            id+
+            '/status',
+            {
+                status:'REJECTED'
+            }
+        );
+
+        await loadIncidents();
+
+        await viewHistory(id);
+
+    }
+    catch(error){
+
+        alert(
+            error.message||
+            'Unable to reject incident.'
+        );
+
+    }
+
+}
+
+
+function openAssign(id){
+
+    selectedIncident=
+        incidents.find(
+            item=>Number(item.id)===Number(id)
+        );
+
+    if(!selectedIncident){
+
+        return;
+
+    }
+
+    document.getElementById(
+        'assignIncidentTitle'
+    ).textContent=
+        incidentTitle(
+            selectedIncident
+        );
+
+    document.getElementById(
+        'departmentSelect'
+    ).value='';
+
+    document.getElementById(
+        'assignError'
+    ).textContent='';
+
+    document.getElementById(
+        'assignSuccess'
+    ).textContent='';
+
+    document.getElementById(
+        'assignModal'
+    ).classList.add('show');
+
+}
+
+
+async function confirmAssignment(){
+
+    if(!selectedIncident){
+
+        return;
+
+    }
+
+    const departmentId=
+        Number(
+            document.getElementById(
+                'departmentSelect'
+            ).value
+        );
+
+    const error=
+        document.getElementById(
+            'assignError'
+        );
+
+    const success=
+        document.getElementById(
+            'assignSuccess'
+        );
+
+    error.textContent='';
+    success.textContent='';
+
+    if(!departmentId){
+
+        error.textContent=
+            'Please select a department.';
+
+        return;
+
+    }
+
+    try{
+
+        await apiPatch(
+            '/api/incidents/'+
+            Number(selectedIncident.id)+
+            '/department',
+            {
+                department_id:
+                    departmentId
+            }
+        );
+
+        success.textContent=
+            'Incident assigned successfully.';
+
+        await loadIncidents();
+
+        setTimeout(
+            ()=>{
+                closeModal(
+                    'assignModal'
+                );
+            },
+            600
+        );
+
+    }
+    catch(errorObject){
+
+        error.textContent=
+            errorObject.message||
+            'Unable to assign department.';
+
+    }
+
+}
+
+
+function viewIncident(id){
+
+    const item=
+        incidents.find(
+            x=>Number(x.id)===Number(id)
+        );
+
+    if(!item){
+
+        return;
+
+    }
+
+    document.getElementById(
+        'detailTitle'
+    ).textContent=
+        incidentTitle(item);
+
+    document.getElementById(
+        'detailContent'
+    ).innerHTML=
+
+        '<div class="detail-grid">'+
+
+        '<div class="detail">'+
+        '<span>Incident ID</span>'+
+        '<b>#'+
+        escapeHTML(item.id)+
+        '</b>'+
+        '</div>'+
+
+        '<div class="detail">'+
+        '<span>Severity</span>'+
+        '<b>'+
+        '<span class="badge '+
+        severityClass(item.severity)+
+        '">'+
+        escapeHTML(
+            normalizeSeverity(
+                item.severity
+            )
+        )+
+        '</span>'+
+        '</b>'+
+        '</div>'+
+
+        '<div class="detail">'+
+        '<span>Status</span>'+
+        '<b>'+
+        escapeHTML(
+            normalizeStatus(
+                item.status
+            )
+        )+
+        '</b>'+
+        '</div>'+
+
+        '<div class="detail">'+
+        '<span>Department</span>'+
+        '<b>'+
+        escapeHTML(
+            item.department_name||
+            item.department||
+            'Not assigned'
+        )+
+        '</b>'+
+        '</div>'+
+
+        '<div class="detail">'+
+        '<span>Location</span>'+
+        '<b>'+
+        escapeHTML(
+            incidentLocation(item)
+        )+
+        '</b>'+
+        '</div>'+
+
+        '<div class="detail">'+
+        '<span>Reported</span>'+
+        '<b>'+
+        escapeHTML(
+            formatDate(
+                item.created_at
+            )
+        )+
+        '</b>'+
+        '</div>'+
+
+        '<div class="detail full">'+
+        '<span>Description</span>'+
+        '<b>'+
+        escapeHTML(
+            incidentDescription(item)
+        )+
+        '</b>'+
+        '</div>'+
+
+        '<div class="detail full">'+
+        '<span>Authority Responsibility</span>'+
+        '<b>'+
+        'Verify or reject the report, then assign it to the responsible department.'+
+        '</b>'+
+        '</div>'+
+
+        '</div>';
+
+    document.getElementById(
+        'detailModal'
+    ).classList.add('show');
+
+}
+
+
+async function viewHistory(id){
+
+    document.getElementById(
+        'historyTable'
+    ).innerHTML=
+        '<tr><td colspan="6">'+
+        '<div class="loading">Loading history…</div>'+
+        '</td></tr>';
+
+    try{
+
+        const data=
+            await apiGet(
+                '/api/incidents/'+
+                id+
+                '/history'
+            );
+
+        const rows=
+            Array.isArray(data)
+                ?data
+                :(data.history||
+                  data.rows||
+                  data.data||
+                  []);
+
+        if(!rows.length){
+
+            document.getElementById(
+                'historyTable'
+            ).innerHTML=
+                '<tr><td colspan="6">'+
+                '<div class="empty">'+
+                'No history records found.'+
+                '</div>'+
+                '</td></tr>';
+
+            return;
+
+        }
+
+        document.getElementById(
+            'historyTable'
+        ).innerHTML=
+            rows.map(
+                row=>
+
+                '<tr>'+
+
+                '<td>'+
+                escapeHTML(
+                    formatDate(
+                        row.created_at||
+                        row.timestamp
+                    )
+                )+
+                '</td>'+
+
+                '<td>#'+
+                escapeHTML(
+                    id
+                )+
+                '</td>'+
+
+                '<td>'+
+                escapeHTML(
+                    row.action||
+                    row.event||
+                    row.status||
+                    '—'
+                )+
+                '</td>'+
+
+                '<td>'+
+                escapeHTML(
+                    row.from_status||
+                    row.previous_status||
+                    '—'
+                )+
+                '</td>'+
+
+                '<td>'+
+                escapeHTML(
+                    row.to_status||
+                    row.new_status||
+                    '—'
+                )+
+                '</td>'+
+
+                '<td>'+
+                escapeHTML(
+                    row.actor_name||
+                    row.actor||
+                    row.user_name||
+                    'NEXUS'
+                )+
+                '</td>'+
+
+                '</tr>'
+            ).join('');
+
+        document.getElementById(
+            'historyTable'
+        ).scrollIntoView({
+            behavior:'smooth',
+            block:'center'
+        });
+
+    }
+    catch(error){
+
+        document.getElementById(
+            'historyTable'
+        ).innerHTML=
+            '<tr><td colspan="6">'+
+            '<div class="empty">'+
+            escapeHTML(
+                error.message||
+                'Unable to load history.'
+            )+
+            '</div>'+
+            '</td></tr>';
+
+    }
+
+}
+
+
+async function loadNotifications(){
+
+    const box=
+        document.getElementById(
+            'notifications'
+        );
+
+    try{
+
+        const data=
+            await apiGet(
+                '/api/notifications'
+            );
+
+        const rows=
+            Array.isArray(data)
+                ?data
+                :(data.notifications||
+                  data.rows||
+                  data.data||
+                  []);
+
+        if(!rows.length){
+
+            box.innerHTML=
+                '<div class="notification">'+
+                '<b>No authority notifications</b>'+
+                '<p>'+
+                'No notification records were returned.'+
+                '</p>'+
+                '</div>';
+
+            return;
+
+        }
+
+        box.innerHTML=
+            rows
+            .slice(0,12)
+            .map(
+                item=>
+
+                '<article class="notification">'+
+
+                '<b>'+
+                escapeHTML(
+                    item.title||
+                    item.type||
+                    'NEXUS Notification'
+                )+
+                '</b>'+
+
+                '<p>'+
+                escapeHTML(
+                    item.message||
+                    item.description||
+                    'Notification received.'
+                )+
+                '</p>'+
+
+                '<small>'+
+                escapeHTML(
+                    formatDate(
+                        item.created_at||
+                        item.createdAt
+                    )
+                )+
+                '</small>'+
+
+                '</article>'
+            )
+            .join('');
+
+    }
+    catch(error){
+
+        box.innerHTML=
+            '<div class="notification">'+
+            '<b>Notifications unavailable</b>'+
+            '<p>'+
+            escapeHTML(
+                error.message
+            )+
+            '</p>'+
+            '</div>';
+
+    }
+
+}
+
+
+function updateStats(){
+
+    const total=
+        incidents.length;
+
+    const reported=
+        incidents.filter(
+            x=>
+            normalizeStatus(
+                x.status
+            )==='REPORTED'
+        ).length;
+
+    const verified=
+        incidents.filter(
+            x=>
+            normalizeStatus(
+                x.status
+            )==='VERIFIED'
+        ).length;
+
+    const assigned=
+        incidents.filter(
+            x=>
+            normalizeStatus(
+                x.status
+            )==='ASSIGNED'
+        ).length;
+
+    const priority=
+        incidents.filter(
+            x=>
+            ['HIGH','CRITICAL']
+            .includes(
+                normalizeSeverity(
+                    x.severity
+                )
+            )
+        ).length;
+
+    document.getElementById(
+        'totalCount'
+    ).textContent=total;
+
+    document.getElementById(
+        'reportedCount'
+    ).textContent=reported;
+
+    document.getElementById(
+        'verifiedCount'
+    ).textContent=verified;
+
+    document.getElementById(
+        'assignedCount'
+    ).textContent=assigned;
+
+    document.getElementById(
+        'priorityCount'
+    ).textContent=priority;
+
+}
+
+
+function closeModal(id){
+
+    document.getElementById(id)
+        .classList.remove('show');
+
+}
+
+
+function goHome(){
+
+    window.location.href=
+        'index.html';
+
+}
+
+
+function logout(){
+
+    localStorage.removeItem(
+        TOKEN_KEY
+    );
+
+    localStorage.removeItem(
+        USER_KEY
+    );
+
+    window.location.href=
+        'index.html';
+
+}
+
+
+document.addEventListener(
+    'DOMContentLoaded',
+    async function(){
+
+        const valid=
+            await verifyAuthority();
+
+        if(!valid){
+
+            return;
+
+        }
+
+        await loadIncidents();
+
+        await loadNotifications();
+
+    }
+);
+
+</script>
+
+</body>
+</html>
